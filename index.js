@@ -6,6 +6,7 @@ const log = require('loglevel');
 const ffmpeg = require('@thedave42/fluent-ffmpeg');
 const inquirer = require('inquirer');
 const util = require('util');
+const fs = require('fs');
 
 const { isF1tvUrl, isRace } = require('./lib/f1tv-validator');
 const { getContentInfo, getContentStreamUrl, getAdditionalStreamsInfo, getContentParams, saveF1tvToken, getProgramStreamId } = require('./lib/f1tv-api');
@@ -214,6 +215,7 @@ const getTokenizedUrl = async (url, content, channel) => {
         const ext = (format == "mp4") ? 'mp4' : 'ts';
         const outFile = (isRace(content) && channel !== null) ? `${getContentParams(url).name}-${channel.split(' ').shift()}.${ext}` : `${getContentParams(url).name}.${ext}`;
         const outFileSpec = (outputDir !== null) ? outputDir + outFile : outFile;
+        if (outputDir !== null) fs.mkdirSync(outputDir, { recursive: true });
 
         const plDetails = await getProgramStreamId(f1tvUrl, audioStream, videoSize);
         log.debug(JSON.stringify(plDetails, 2, 4));
